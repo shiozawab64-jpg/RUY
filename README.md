@@ -38,6 +38,7 @@ npm run dev
 | `/gastos` | Gastos por mês/categoria/banco, feedback automático e análise com IA |
 | `/connect` | Pluggy Connect Widget + lista de conexões |
 | `/api/pluggy/token` | Gera connect token (server-only) |
+| `/api/pluggy/webhook` | Recebe eventos Pluggy (checklist produção + sync em background) |
 | `/api/pluggy/accounts` | Contas e saldos por `itemIds` |
 | `/api/pluggy/transactions` | Transações dos últimos 30 dias |
 | `/api/pluggy/items/[itemId]` | Remove conexão na Pluggy |
@@ -58,6 +59,33 @@ Este repositório é um app Next.js standalone (raiz = projeto).
 6. Deploy. Produção atualiza automaticamente a cada push em `main`; PRs geram previews.
 
 Não commite `.env.local`. Não use `vercel --prod` manualmente — o fluxo oficial é push para GitHub.
+
+## Webhooks Pluggy (checklist de produção)
+
+Para concluir o passo 3 do **Request Production Access** no [dashboard Pluggy](https://dashboard.pluggy.ai):
+
+| Campo | Valor |
+| --- | --- |
+| **URL** | `https://ruy-two.vercel.app/api/pluggy/webhook` |
+| **Eventos** | `all` — ou: `item/created`, `item/updated`, `transactions/created`, `transactions/updated`, `transactions/deleted` |
+
+A rota responde **200** imediatamente. Sync em background ocorre quando KV está configurado e o `itemId` do evento está registrado.
+
+**Alternativa (sandbox):** se ainda estiver em sandbox com MeuPluggy, pode **pular o passo 3** — bancos de teste funcionam sem webhook. O app desktop sincroniza via cron diário (9h BRT) mesmo sem URL pública.
+
+**App desktop:** o `.dmg` roda em localhost; deixe webhooks em branco no dashboard para uso local. Use a URL acima só para satisfazer o checklist de produção.
+
+**Segurança opcional:** Pluggy não envia `x-pluggy-signature`. Para autenticar, crie o webhook via API com header `X-Webhook-Secret` e defina `PLUGGY_WEBHOOK_SECRET` no Vercel.
+
+Teste rápido:
+
+```bash
+curl -s -X POST https://ruy-two.vercel.app/api/pluggy/webhook \
+  -H "Content-Type: application/json" \
+  -d '{"event":"item/updated","eventId":"test","itemId":"a5c763cb-0952-457b-9936-630f79c5b016"}'
+```
+
+Resposta esperada: `{"received":true,"event":"item/updated"}` com HTTP 200.
 
 ## Origem
 
