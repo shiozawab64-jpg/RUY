@@ -1,0 +1,163 @@
+@import "tailwindcss";
+
+@theme {
+  --color-ink: #111111;
+  --color-ink-muted: #3d3a36;
+  --color-paper: #faf9f7;
+  --color-paper-muted: #f4f3f0;
+  --color-rule: #d4d0c8;
+  --color-rule-strong: #111111;
+  --color-muted: #6b6560;
+  --color-accent: #c9a227;
+  --color-accent-muted: #e8d48a;
+  --color-negative: #991b1b;
+  --color-positive: #1a4d2e;
+  --font-display: var(--font-libre-baskerville), ui-serif, Georgia, "Times New Roman", serif;
+  --font-body: var(--font-source-sans), ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --radius-editorial: 2px;
+}
+
+@layer base {
+  html {
+    background: var(--color-paper);
+  }
+
+  body {
+    margin: 0;
+    background: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+}
+
+@layer components {
+  .ruy-section-label {
+    font-family: var(--font-body);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+
+  .ruy-headline {
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--color-ink);
+  }
+
+  .ruy-card {
+    border: 1px solid var(--color-rule);
+    border-radius: var(--radius-editorial);
+    background: white;
+  }
+
+  .ruy-rule {
+    border: 0;
+    border-top: 1px solid var(--color-rule);
+    margin: 0;
+  }
+
+  .ruy-rule-strong {
+    border: 0;
+    border-top: 2px solid var(--color-rule-strong);
+    margin: 0;
+  }
+
+  .ruy-btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-editorial);
+    border: 1px solid var(--color-ink);
+    background: var(--color-ink);
+    padding: 0.625rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: white;
+    transition: background-color 0.15s ease;
+  }
+
+  .ruy-btn-primary:hover:not(:disabled) {
+    background: var(--color-ink-muted);
+  }
+
+  .ruy-btn-primary:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+
+  .ruy-btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-editorial);
+    border: 1px solid var(--color-rule);
+    background: white;
+    padding: 0.625rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-ink);
+    transition: background-color 0.15s ease;
+  }
+
+  .ruy-btn-secondary:hover {
+    background: var(--color-paper-muted);
+  }
+
+  .ruy-accent-bar {
+    height: 3px;
+    background: linear-gradient(
+      90deg,
+      var(--color-accent) 0%,
+      var(--color-accent-muted) 55%,
+      transparent 100%
+    );
+  }
+
+  .ruy-data-table {
+    width: 100%;
+    min-width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+  }
+
+  .ruy-data-table thead {
+    border-bottom: 2px solid var(--color-ink);
+    text-align: left;
+  }
+
+  .ruy-data-table th {
+    padding: 0.625rem 1rem;
+    font-family: var(--font-body);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+
+  .ruy-data-table td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--color-rule);
+    vertical-align: top;
+  }
+
+  .ruy-data-table tbody tr:last-child td {
+    border-bottom: 0;
+  }
+}
