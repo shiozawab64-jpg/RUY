@@ -159,7 +159,6 @@ export const ConnectContent = () => {
                     className="border border-negative/30 px-4 py-2 text-sm font-semibold text-negative transition hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-60"
                     disabled={removingItemId === connection.itemId}
                     onClick={() => void handleRemove(connection.itemId)}
-                    style={{ borderRadius: "var(--radius-editorial)" }}
                     type="button"
                   >
                     {removingItemId === connection.itemId ? (

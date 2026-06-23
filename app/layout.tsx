@@ -1,19 +1,26 @@
-import { Libre_Baskerville, Source_Sans_3 } from "next/font/google";
+import { DM_Mono, Inter, Playfair_Display } from "next/font/google";
 import type { Metadata } from "next";
 import "./globals.css";
 import { AppShell } from "@/components/app-shell";
 
-const libreBaskerville = Libre_Baskerville({
+const playfair = Playfair_Display({
   subsets: ["latin"],
-  weight: ["400", "700"],
-  variable: "--font-libre-baskerville",
+  weight: ["400", "600", "700"],
+  variable: "--font-playfair",
   display: "swap",
 });
 
-const sourceSans = Source_Sans_3({
+const dmMono = DM_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  variable: "--font-dm-mono",
+  display: "swap",
+});
+
+const inter = Inter({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
-  variable: "--font-source-sans",
+  variable: "--font-inter",
   display: "swap",
 });
 
@@ -30,7 +37,10 @@ type RootLayoutProps = Readonly<{
 }>;
 
 const RootLayout = ({ children }: RootLayoutProps) => (
-  <html className={`${libreBaskerville.variable} ${sourceSans.variable}`} lang="pt-BR">
+  <html
+    className={`${playfair.variable} ${dmMono.variable} ${inter.variable}`}
+    lang="pt-BR"
+  >
     <body className="antialiased">
       <AppShell>{children}</AppShell>
     </body>

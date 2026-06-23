@@ -29,7 +29,7 @@ const formatChange = (changePercent: number | null): string => {
   return `${sign}${changePercent.toFixed(2)}%`;
 };
 
-export const MarketTicker = () => {
+export const useMarketQuotes = () => {
   const [quotes, setQuotes] = useState<MarketQuote[]>(FALLBACK_QUOTES);
 
   useEffect(() => {
@@ -51,39 +51,40 @@ export const MarketTicker = () => {
     return () => window.clearInterval(intervalId);
   }, []);
 
+  return quotes;
+};
+
+type InlineMarketTickerProps = {
+  className?: string;
+};
+
+export const InlineMarketTicker = ({ className = "" }: InlineMarketTickerProps) => {
+  const quotes = useMarketQuotes();
+
   return (
-    <div className="border-b border-ink/20 bg-ink text-paper">
-      <div className="flex items-stretch overflow-hidden">
-        <div className="hidden shrink-0 items-center border-r border-white/15 px-4 py-2 sm:flex">
-          <span className="ruy-section-label text-[0.625rem] text-accent">Mercados</span>
-        </div>
-        <div className="flex min-w-0 flex-1 overflow-x-auto">
-          <ul className="flex items-center gap-0 whitespace-nowrap py-2">
-            {quotes.map((quote, index) => (
-              <li
-                className={`flex items-center gap-2 px-4 text-xs ${
-                  index > 0 ? "border-l border-white/15" : ""
-                }`}
-                key={quote.id}
-              >
-                <span className="font-semibold tracking-wide text-accent">{quote.label}</span>
-                <span className="tabular-nums text-paper">{formatQuoteValue(quote)}</span>
-                <span
-                  className={`tabular-nums ${
-                    quote.changePercent !== null && quote.changePercent > 0
-                      ? "text-emerald-300"
-                      : quote.changePercent !== null && quote.changePercent < 0
-                        ? "text-red-300"
-                        : "text-paper/60"
-                  }`}
-                >
-                  {formatChange(quote.changePercent)}
-                </span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </div>
-    </div>
+    <ul className={`flex min-w-0 items-center gap-0 overflow-x-auto whitespace-nowrap ${className}`}>
+      {quotes.map((quote, index) => (
+        <li
+          className={`flex shrink-0 items-center gap-2 px-3 text-[0.6875rem] ${
+            index > 0 ? "border-l border-white/15" : ""
+          }`}
+          key={quote.id}
+        >
+          <span className="font-semibold tracking-wide text-accent">{quote.label}</span>
+          <span className="ruy-numeric text-paper">{formatQuoteValue(quote)}</span>
+          <span
+            className={`ruy-numeric ${
+              quote.changePercent !== null && quote.changePercent > 0
+                ? "text-emerald-300"
+                : quote.changePercent !== null && quote.changePercent < 0
+                  ? "text-red-300"
+                  : "text-paper/60"
+            }`}
+          >
+            {formatChange(quote.changePercent)}
+          </span>
+        </li>
+      ))}
+    </ul>
   );
 };

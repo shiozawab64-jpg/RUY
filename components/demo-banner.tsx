@@ -3,12 +3,7 @@ type DemoBannerProps = {
 };
 
 export const DemoBanner = ({ compact = false }: DemoBannerProps) => (
-  <div
-    className={`border border-accent/40 bg-accent/5 ${
-      compact ? "px-4 py-3" : "px-5 py-4"
-    }`}
-    style={{ borderRadius: "var(--radius-editorial)" }}
-  >
+  <div className={`border border-accent/40 bg-accent/5 ${compact ? "px-4 py-3" : "px-5 py-4"}`}>
     <p className="ruy-section-label text-accent">Dados de exemplo</p>
     <p className="mt-1 text-sm text-ink-muted">
       {compact

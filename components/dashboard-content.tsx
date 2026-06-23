@@ -7,7 +7,6 @@ import { CurrencyBalances } from "@/components/currency-balances";
 import { DemoBanner } from "@/components/demo-banner";
 import { InsightsPanel } from "@/components/insights-panel";
 import { CurrencySelector, PortfolioSelector } from "@/components/portfolio-controls";
-import { LocalDateTime } from "@/components/local-date-time";
 import { RuyBrand } from "@/components/ruy-brand";
 import { BankLogo } from "@/components/ui/bank-logo";
 import { ErrorMessage } from "@/components/ui/error-message";
@@ -187,7 +186,6 @@ export const DashboardContent = () => {
               <RuyBrand showTitle={false} size="lg" />
               <div>
                 <p className="ruy-section-label">Olá, Ruy</p>
-                <LocalDateTime />
                 <h2 className="ruy-headline mt-2 text-4xl">Dashboard</h2>
                 <p className="mt-2 text-sm text-muted">
                   {connectionCount} banco(s) · {filteredAccounts.length} conta(s) ·{" "}
@@ -241,7 +239,7 @@ export const DashboardContent = () => {
               <section className="grid gap-4 sm:grid-cols-3">
                 <article className="ruy-card p-4">
                   <p className="ruy-section-label">Gastos este mês</p>
-                  <p className="mt-2 font-display text-xl font-bold text-negative">
+                  <p className="ruy-numeric mt-2 text-xl font-medium text-negative">
                     {formatCurrency(analytics.currentMonth.expenses, analyticsCurrency)}
                   </p>
                 </article>
@@ -251,14 +249,14 @@ export const DashboardContent = () => {
                     {analytics.byCategory[0]?.category ?? "—"}
                   </p>
                   {analytics.byCategory[0] ? (
-                    <p className="mt-1 text-sm text-muted">
+                    <p className="ruy-numeric mt-1 text-sm text-muted">
                       {formatCurrency(analytics.byCategory[0].total, analyticsCurrency)}
                     </p>
                   ) : null}
                 </article>
                 <article className="ruy-card p-4">
                   <p className="ruy-section-label">vs mês passado</p>
-                  <p className="mt-2 font-display text-xl font-bold text-ink">
+                  <p className="ruy-numeric mt-2 text-xl font-medium text-ink">
                     {analytics.expenseChangePercent === null
                       ? "—"
                       : `${analytics.expenseChangePercent > 0 ? "+" : ""}${analytics.expenseChangePercent.toFixed(0)}%`}
@@ -297,7 +295,7 @@ export const DashboardContent = () => {
                           {account.accountType} · {account.accountName} · {account.currencyCode}
                         </p>
                         <p
-                          className={`mt-3 font-display text-xl font-bold ${
+                          className={`ruy-numeric mt-3 text-xl font-medium ${
                             account.balance < 0 ? "text-negative" : "text-ink"
                           }`}
                         >
@@ -341,7 +339,7 @@ export const DashboardContent = () => {
                           </td>
                           <td className="text-muted">{transaction.category}</td>
                           <td
-                            className={`whitespace-nowrap font-semibold ${amountClassName(transaction.amount)}`}
+                            className={`ruy-numeric whitespace-nowrap font-medium ${amountClassName(transaction.amount)}`}
                           >
                             {formatCurrency(transaction.amount, transaction.currencyCode)}
                           </td>

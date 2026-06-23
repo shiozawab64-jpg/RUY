@@ -2,15 +2,24 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { InlineMarketTicker } from "@/components/market-ticker";
 import { LocalDateTime } from "@/components/local-date-time";
 
 export const JournalMasthead = () => (
-  <header className="border-b border-rule bg-paper">
-    <div className="mx-auto w-full max-w-6xl px-4 pt-4 sm:px-8 sm:pt-5">
-      <div className="mb-3 flex justify-center sm:hidden">
-        <LocalDateTime variant="editorial" />
+  <header className="border-b-2 border-ink bg-paper">
+    <div className="border-b border-ink bg-ink text-paper">
+      <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-3 px-4 py-1.5 sm:px-8">
+        <div className="flex min-w-0 flex-1 items-center gap-3">
+          <span className="hidden shrink-0 ruy-section-label text-[0.5625rem] text-accent sm:inline">
+            Mercados
+          </span>
+          <InlineMarketTicker className="py-0.5" />
+        </div>
+        <LocalDateTime variant="masthead" />
       </div>
+    </div>
 
+    <div className="mx-auto w-full max-w-6xl px-4 pt-4 sm:px-8 sm:pt-5">
       <div className="grid grid-cols-1 items-end gap-4 sm:grid-cols-[1fr_auto_1fr]">
         <div className="hidden sm:block">
           <LocalDateTime variant="editorial" />

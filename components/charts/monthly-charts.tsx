@@ -56,8 +56,8 @@ export const MonthlyComparisonChart = ({
           iconType="square"
           wrapperStyle={{ fontSize: 12, paddingTop: 8 }}
         />
-        <Bar dataKey="Gastos" fill={CHART_EXPENSE} radius={[1, 1, 0, 0]} />
-        <Bar dataKey="Entradas" fill={CHART_INCOME} radius={[1, 1, 0, 0]} />
+        <Bar dataKey="Gastos" fill={CHART_EXPENSE} radius={[0, 0, 0, 0]} />
+        <Bar dataKey="Entradas" fill={CHART_INCOME} radius={[0, 0, 0, 0]} />
       </BarChart>
     </ResponsiveContainer>
   );
@@ -104,7 +104,7 @@ export const ExpenseTrendChart = ({
             content={<CurrencyTooltip currency={currency} />}
             formatter={(value) => formatCurrency(Number(value), currency)}
           />
-          <Bar dataKey="Gastos" fill={CHART_INCOME} radius={[1, 1, 0, 0]} />
+          <Bar dataKey="Gastos" fill={CHART_INCOME} radius={[0, 0, 0, 0]} />
         </BarChart>
       </ResponsiveContainer>
     </ChartCard>

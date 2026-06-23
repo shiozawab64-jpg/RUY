@@ -198,7 +198,6 @@ export const GastosContent = () => {
                   }`}
                   key={option.months}
                   onClick={() => setMonths(option.months)}
-                  style={{ borderRadius: "var(--radius-editorial)" }}
                   type="button"
                 >
                   {option.label}

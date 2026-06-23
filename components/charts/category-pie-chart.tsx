@@ -61,7 +61,7 @@ export const CategoryPieChart = ({ categories, currency = "BRL" }: CategoryPieCh
           <Tooltip
             formatter={(value) => formatCurrency(Number(value), currency)}
             contentStyle={{
-              borderRadius: 2,
+              borderRadius: 0,
               border: "1px solid #d4d0c8",
               fontSize: 13,
             }}

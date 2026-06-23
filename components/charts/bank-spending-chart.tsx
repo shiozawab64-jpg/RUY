@@ -59,7 +59,7 @@ export const BankSpendingChart = ({ banks, currency = "BRL" }: BankSpendingChart
           />
           <Tooltip
             contentStyle={{
-              borderRadius: 2,
+              borderRadius: 0,
               border: "1px solid #d4d0c8",
               fontSize: 13,
             }}
@@ -71,7 +71,7 @@ export const BankSpendingChart = ({ banks, currency = "BRL" }: BankSpendingChart
               ];
             }}
           />
-          <Bar dataKey="total" radius={[0, 1, 1, 0]}>
+          <Bar dataKey="total" radius={[0, 0, 0, 0]}>
             {data.map((entry, index) => (
               <Cell fill={CHART_COLORS[index % CHART_COLORS.length]} key={entry.name} />
             ))}

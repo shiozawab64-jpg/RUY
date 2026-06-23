@@ -26,17 +26,14 @@ export const CurrencyTooltip = ({
   }
 
   return (
-    <div
-      className="border border-rule bg-white px-3 py-2"
-      style={{ borderRadius: "var(--radius-editorial)" }}
-    >
+    <div className="border border-rule bg-white px-3 py-2">
       <p className="ruy-section-label capitalize">{label}</p>
       <ul className="mt-1 space-y-1">
         {payload.map((entry) => (
           <li className="flex items-center gap-2 text-sm" key={entry.name}>
             <span className="h-2 w-2" style={{ backgroundColor: entry.color }} />
             <span className="text-muted">{entry.name}:</span>
-            <span className="font-semibold text-ink">
+            <span className="ruy-numeric font-semibold text-ink">
               {formatCurrency(Number(entry.value ?? 0), currency)}
             </span>
           </li>

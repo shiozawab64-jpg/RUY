@@ -1,5 +1,6 @@
 import type { CurrencyBalanceSummary, PortfolioFilter } from "@/lib/portfolio/types";
 import { PORTFOLIO_META } from "@/lib/portfolio/types";
+import { AnimatedCounter } from "@/components/animated-counter";
 import { formatCurrency } from "@/lib/format";
 
 type CurrencyBalancesProps = {
@@ -7,50 +8,99 @@ type CurrencyBalancesProps = {
   balances: CurrencyBalanceSummary[];
 };
 
+const PRIMARY_CURRENCY_ORDER = ["BRL", "USD", "EUR"] as const;
+
+const sortBalances = (balances: CurrencyBalanceSummary[]): CurrencyBalanceSummary[] =>
+  [...balances].sort((a, b) => {
+    const aIndex = PRIMARY_CURRENCY_ORDER.indexOf(
+      a.currency as typeof PRIMARY_CURRENCY_ORDER[number],
+    );
+    const bIndex = PRIMARY_CURRENCY_ORDER.indexOf(
+      b.currency as typeof PRIMARY_CURRENCY_ORDER[number],
+    );
+    const aRank = aIndex === -1 ? PRIMARY_CURRENCY_ORDER.length : aIndex;
+    const bRank = bIndex === -1 ? PRIMARY_CURRENCY_ORDER.length : bIndex;
+    return aRank - bRank;
+  });
+
 export const CurrencyBalances = ({ portfolio, balances }: CurrencyBalancesProps) => {
   const meta = PORTFOLIO_META[portfolio];
+  const sortedBalances = sortBalances(balances);
+  const heroBalance = sortedBalances[0];
+  const secondaryBalances = sortedBalances.slice(1);
 
   if (balances.length === 0) {
     return (
-      <section className="rounded-3xl border border-dashed border-slate-300 bg-slate-50 px-6 py-8 text-center">
-        <p className="text-sm text-slate-600">Nenhuma conta em {meta.label}.</p>
+      <section className="border border-dashed border-rule bg-paper-muted px-6 py-8 text-center">
+        <p className="text-sm text-muted">Nenhuma conta em {meta.label}.</p>
       </section>
     );
   }
 
   return (
-    <section className="space-y-3">
-      <div>
-        <p className="text-sm text-slate-500">Saldo consolidado · {meta.label}</p>
-        {portfolio === "holding" ? (
-          <p className="text-xs text-slate-400">CNPJ {meta.subtitle.replace("CNPJ ", "")}</p>
-        ) : portfolio === "geral" ? (
-          <p className="text-xs text-slate-400">{meta.subtitle}</p>
-        ) : null}
-      </div>
+    <section className="space-y-6">
+      {heroBalance ? (
+        <article className="border-2 border-ink bg-ink px-6 py-8 text-paper sm:px-8 sm:py-10">
+          <p className="ruy-headline text-lg font-semibold tracking-tight text-paper sm:text-xl">
+            Patrimônio consolidado
+          </p>
+          <p className="mt-1 text-sm text-paper/60">{meta.label}</p>
+          {portfolio === "holding" ? (
+            <p className="ruy-numeric text-xs text-paper/45">
+              CNPJ {meta.subtitle.replace("CNPJ ", "")}
+            </p>
+          ) : portfolio === "geral" ? (
+            <p className="text-xs text-paper/45">{meta.subtitle}</p>
+          ) : null}
 
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-        {balances.map((balance) => (
-          <article
-            className="rounded-2xl border border-slate-200 bg-slate-950 px-5 py-5 text-white"
-            key={balance.currency}
-          >
-            <p className="text-xs uppercase tracking-[0.18em] text-slate-400">{balance.currency}</p>
+          <div className="mt-6 border-t border-white/15 pt-6">
+            <p className="ruy-section-label text-accent">{heroBalance.currency}</p>
             <p
-              className={`mt-2 text-3xl font-semibold tracking-tight ${
-                balance.total < 0 ? "text-rose-300" : "text-white"
+              className={`mt-2 ruy-numeric text-4xl font-medium tracking-tight sm:text-5xl lg:text-6xl ${
+                heroBalance.total < 0 ? "text-red-300" : "text-paper"
               }`}
             >
-              {formatCurrency(balance.total, balance.currency)}
+              <AnimatedCounter
+                format={(value) => formatCurrency(value, heroBalance.currency)}
+                value={heroBalance.total}
+              />
             </p>
-            <p className="mt-2 text-sm text-slate-400">
-              {balance.accountCount} conta(s) nesta moeda
+            <p className="ruy-numeric mt-3 text-sm text-paper/55">
+              {heroBalance.accountCount} conta(s) nesta moeda
             </p>
-          </article>
-        ))}
-      </div>
+          </div>
+        </article>
+      ) : null}
 
-      <p className="text-xs text-slate-500">
+      {secondaryBalances.length > 0 ? (
+        <div className="grid gap-0 border border-rule sm:grid-cols-2 xl:grid-cols-3">
+          {secondaryBalances.map((balance, index) => (
+            <article
+              className={`border-rule bg-white px-5 py-5 ${
+                index > 0 ? "border-t sm:border-t-0 sm:border-l" : ""
+              } ${index >= 2 ? "xl:border-t xl:border-l-0" : ""}`}
+              key={balance.currency}
+            >
+              <p className="ruy-section-label">{balance.currency}</p>
+              <p
+                className={`mt-2 ruy-numeric text-2xl font-medium tracking-tight ${
+                  balance.total < 0 ? "text-negative" : "text-ink"
+                }`}
+              >
+                <AnimatedCounter
+                  format={(value) => formatCurrency(value, balance.currency)}
+                  value={balance.total}
+                />
+              </p>
+              <p className="ruy-numeric mt-2 text-sm text-muted">
+                {balance.accountCount} conta(s)
+              </p>
+            </article>
+          ))}
+        </div>
+      ) : null}
+
+      <p className="text-xs text-muted">
         Moedas não são convertidas entre si — cada total reflete apenas contas na mesma moeda.
       </p>
     </section>

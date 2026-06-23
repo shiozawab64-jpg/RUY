@@ -12,9 +12,9 @@
   --color-accent-muted: #e8d48a;
   --color-negative: #991b1b;
   --color-positive: #1a4d2e;
-  --font-display: var(--font-libre-baskerville), ui-serif, Georgia, "Times New Roman", serif;
-  --font-body: var(--font-source-sans), ui-sans-serif, system-ui, -apple-system, sans-serif;
-  --radius-editorial: 2px;
+  --font-display: var(--font-playfair), ui-serif, Georgia, "Times New Roman", serif;
+  --font-ui: var(--font-inter), ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-mono: var(--font-dm-mono), ui-monospace, "Cascadia Mono", monospace;
 }
 
 @layer base {
@@ -26,7 +26,7 @@
     margin: 0;
     background: var(--color-paper);
     color: var(--color-ink);
-    font-family: var(--font-body);
+    font-family: var(--font-ui);
     font-size: 16px;
     line-height: 1.55;
     -webkit-font-smoothing: antialiased;
@@ -44,7 +44,7 @@
 
 @layer components {
   .ruy-section-label {
-    font-family: var(--font-body);
+    font-family: var(--font-ui);
     font-size: 0.6875rem;
     font-weight: 600;
     letter-spacing: 0.14em;
@@ -59,9 +59,15 @@
     color: var(--color-ink);
   }
 
+  .ruy-numeric {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
+  }
+
   .ruy-card {
     border: 1px solid var(--color-rule);
-    border-radius: var(--radius-editorial);
+    border-radius: 0;
     background: white;
   }
 
@@ -81,10 +87,11 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    border-radius: var(--radius-editorial);
+    border-radius: 0;
     border: 1px solid var(--color-ink);
     background: var(--color-ink);
     padding: 0.625rem 1rem;
+    font-family: var(--font-ui);
     font-size: 0.875rem;
     font-weight: 600;
     letter-spacing: 0.02em;
@@ -105,10 +112,11 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    border-radius: var(--radius-editorial);
+    border-radius: 0;
     border: 1px solid var(--color-rule);
     background: white;
     padding: 0.625rem 1rem;
+    font-family: var(--font-ui);
     font-size: 0.875rem;
     font-weight: 600;
     color: var(--color-ink);
@@ -117,16 +125,6 @@
 
   .ruy-btn-secondary:hover {
     background: var(--color-paper-muted);
-  }
-
-  .ruy-accent-bar {
-    height: 3px;
-    background: linear-gradient(
-      90deg,
-      var(--color-accent) 0%,
-      var(--color-accent-muted) 55%,
-      transparent 100%
-    );
   }
 
   .ruy-data-table {
@@ -143,7 +141,7 @@
 
   .ruy-data-table th {
     padding: 0.625rem 1rem;
-    font-family: var(--font-body);
+    font-family: var(--font-ui);
     font-size: 0.6875rem;
     font-weight: 600;
     letter-spacing: 0.1em;

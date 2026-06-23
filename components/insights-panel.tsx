@@ -58,7 +58,6 @@ export const InsightsPanel = ({ open, analysis, loading, error, onClose }: Insig
       />
 
       <aside className="relative flex h-full w-full max-w-xl flex-col border-l-2 border-ink bg-paper">
-        <div className="ruy-accent-bar" />
         <div className="flex items-center justify-between border-b border-rule px-5 py-4">
           <div>
             <p className="ruy-section-label text-accent">IA financeira</p>

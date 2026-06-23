@@ -21,7 +21,6 @@ export const RuyBrand = ({ size = "md", showTitle = true, inverted = false }: Ru
         className={`${styles.box} shrink-0 overflow-hidden border ${
           inverted ? "border-white/20 bg-ink-muted" : "border-rule bg-white"
         }`}
-        style={{ borderRadius: "var(--radius-editorial)" }}
       >
         <Image
           alt="Ruy — GPMH Digital Consulting"

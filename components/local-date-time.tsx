@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 
 type LocalDateTimeProps = {
   inverted?: boolean;
-  variant?: "default" | "inverted" | "editorial";
+  variant?: "default" | "inverted" | "editorial" | "masthead";
 };
 
 const formatLocalDateTime = (date: Date): { dateLine: string; timeLine: string } => {
@@ -42,12 +42,21 @@ export const LocalDateTime = ({
 
   const { dateLine, timeLine } = formatLocalDateTime(now);
 
+  if (variant === "masthead") {
+    return (
+      <div className="shrink-0 text-right text-[0.625rem] leading-snug text-paper/80">
+        <p className="capitalize">{dateLine}</p>
+        <p className="ruy-numeric mt-0.5 text-paper">{timeLine}</p>
+      </div>
+    );
+  }
+
   if (variant === "editorial") {
     return (
       <div className="text-[0.6875rem] leading-relaxed text-muted">
         <p className="ruy-section-label text-muted">Hoje</p>
         <p className="mt-1 capitalize text-ink">{dateLine}</p>
-        <p className="mt-0.5 tabular-nums text-ink-muted">{timeLine}</p>
+        <p className="ruy-numeric mt-0.5 text-ink-muted">{timeLine}</p>
       </div>
     );
   }
@@ -58,7 +67,7 @@ export const LocalDateTime = ({
   return (
     <div className={`text-xs leading-relaxed ${mutedClass}`}>
       <p className="capitalize">{dateLine}</p>
-      <p className={`mt-0.5 font-medium tabular-nums tracking-wide ${timeClass}`}>{timeLine}</p>
+      <p className={`ruy-numeric mt-0.5 font-medium tracking-wide ${timeClass}`}>{timeLine}</p>
     </div>
   );
 };

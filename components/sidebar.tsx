@@ -14,8 +14,7 @@ export const Sidebar = () => {
 
   return (
     <>
-      <header className="sticky top-0 z-40 border-b-2 border-accent/40 bg-ink text-paper md:hidden">
-        <div className="ruy-accent-bar" />
+      <header className="sticky top-0 z-40 border-b-2 border-accent bg-ink text-paper md:hidden">
         <nav className="flex gap-0 overflow-x-auto px-2">
           {navItems.map((item) => {
             const active = pathname === item.href;
@@ -37,8 +36,7 @@ export const Sidebar = () => {
         </nav>
       </header>
 
-      <aside className="fixed inset-y-0 left-0 z-40 hidden w-64 flex-col bg-ink text-paper md:flex">
-        <div className="ruy-accent-bar" />
+      <aside className="fixed inset-y-0 left-0 z-40 hidden w-64 flex-col border-r border-ink bg-ink text-paper md:flex">
         <div className="border-b border-white/10 px-5 py-6">
           <p className="ruy-section-label text-accent">Navegação</p>
           <p className="mt-1 font-display text-base font-bold tracking-tight">Painel do Ruy</p>

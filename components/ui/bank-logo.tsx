@@ -27,7 +27,6 @@ export const BankLogo = ({ bankName, logoUrl, size = "md" }: BankLogoProps) => {
         className={className}
         height={dimension}
         src={logoUrl}
-        style={{ borderRadius: "var(--radius-editorial)" }}
         unoptimized
         width={dimension}
       />
@@ -38,7 +37,6 @@ export const BankLogo = ({ bankName, logoUrl, size = "md" }: BankLogoProps) => {
     <div
       aria-hidden
       className={`${size === "sm" ? "h-8 w-8" : "h-10 w-10"} flex items-center justify-center bg-ink text-xs font-semibold text-paper`}
-      style={{ borderRadius: "var(--radius-editorial)" }}
     >
       {initials(bankName)}
     </div>
