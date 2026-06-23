@@ -1,4 +1,9 @@
-import { getServerEnv } from "../env";
+import { getPluggyEnv } from "../env";
+import {
+  fetchPluggyConnectConfig,
+  isPluggyProductionConnect,
+  type PluggyConnectRemoteConfig,
+} from "./connect-config";
 import type { PluggyAccount, PluggyItem, PluggyTransaction } from "./types";
 
 const PLUGGY_BASE_URL = "https://api.pluggy.ai";
@@ -43,7 +48,7 @@ export const getPluggyApiKey = async (): Promise<string> => {
     return apiKeyCache.apiKey;
   }
 
-  const { PLUGGY_CLIENT_ID, PLUGGY_CLIENT_SECRET } = getServerEnv();
+  const { PLUGGY_CLIENT_ID, PLUGGY_CLIENT_SECRET } = getPluggyEnv();
 
   const response = await fetch(`${PLUGGY_BASE_URL}/auth`, {
     method: "POST",
@@ -70,17 +75,40 @@ export const getPluggyApiKey = async (): Promise<string> => {
 };
 
 export const createConnectToken = async (): Promise<string> => {
+  const options: Record<string, string | boolean> = {
+    clientUserId: "painel-do-ruy",
+    avoidDuplicates: true,
+  };
+
+  const webhookUrl = process.env.PLUGGY_WEBHOOK_URL?.trim();
+  if (webhookUrl) {
+    options.webhookUrl = webhookUrl;
+  }
+
   const data = await pluggyFetch<{ accessToken: string }>("/connect_token", {
     method: "POST",
-    body: JSON.stringify({
-      options: {
-        clientUserId: "painel-do-ruy",
-        avoidDuplicates: true,
-      },
-    }),
+    body: JSON.stringify({ options }),
   });
 
   return data.accessToken;
+};
+
+export const inspectPluggyConnectEnvironment = async (): Promise<{
+  connectToken: string;
+  connectConfig: PluggyConnectRemoteConfig;
+}> => {
+  const connectToken = await createConnectToken();
+  const connectConfig = await fetchPluggyConnectConfig(connectToken);
+
+  return { connectToken, connectConfig };
+};
+
+export const assertPluggyProductionConnect = (connectConfig: PluggyConnectRemoteConfig): void => {
+  if (!isPluggyProductionConnect(connectConfig)) {
+    throw new Error(
+      `Pluggy Connect está em modo ${connectConfig.environment} (isProductionEnabled=false). Use credenciais da aplicação de Produção no dashboard Pluggy.`,
+    );
+  }
 };
 
 export const getItem = async (itemId: string): Promise<PluggyItem> =>
