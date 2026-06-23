@@ -9,6 +9,7 @@ import { CurrencyBalances } from "@/components/currency-balances";
 import { DemoBanner } from "@/components/demo-banner";
 import { InsightsPanel } from "@/components/insights-panel";
 import { CurrencySelector, PortfolioSelector } from "@/components/portfolio-controls";
+import { SyncStatusBar } from "@/components/sync-status-bar";
 import { ErrorMessage } from "@/components/ui/error-message";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import type { SpendingAnalytics } from "@/lib/analytics/spending";
@@ -25,6 +26,8 @@ import {
 import type { CurrencyFilter, PortfolioFilter } from "@/lib/portfolio/types";
 import { PORTFOLIO_META } from "@/lib/portfolio/types";
 import { getItemIds, readConnections } from "@/lib/session/connections";
+import { triggerSyncOnServer } from "@/lib/session/register-connection";
+import type { FinancialDataSource } from "@/lib/sync/types";
 
 type RawAccount = Omit<DashboardAccount, "portfolio">;
 type RawTransaction = Omit<DashboardTransaction, "portfolio">;
@@ -48,6 +51,9 @@ export const GastosContent = () => {
   const [insightsLoading, setInsightsLoading] = useState(false);
   const [insightsError, setInsightsError] = useState<string | null>(null);
   const [analysis, setAnalysis] = useState<string | null>(null);
+  const [lastSyncedAt, setLastSyncedAt] = useState<string | null>(null);
+  const [dataSource, setDataSource] = useState<FinancialDataSource | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
 
   const loadAnalytics = useCallback(async (periodMonths: number) => {
     setLoading(true);
@@ -76,6 +82,7 @@ export const GastosContent = () => {
       const data = (await response.json()) as {
         accounts?: RawAccount[];
         transactions?: RawTransaction[];
+        meta?: { source?: FinancialDataSource; lastSyncedAt?: string | null };
         error?: string;
       };
 
@@ -87,6 +94,8 @@ export const GastosContent = () => {
       const accounts = enrichAccounts(data.accounts ?? [], connections);
       setAllAccounts(accounts);
       setAllTransactions(enrichTransactions(data.transactions ?? [], accounts));
+      setDataSource(data.meta?.source ?? null);
+      setLastSyncedAt(data.meta?.lastSyncedAt ?? null);
     } catch (loadError) {
       setError(
         loadError instanceof Error ? loadError.message : "Não foi possível carregar os gastos.",
@@ -95,6 +104,26 @@ export const GastosContent = () => {
       setLoading(false);
     }
   }, []);
+
+  const handleRefresh = async () => {
+    const itemIds = getItemIds();
+    if (itemIds.length === 0) {
+      return;
+    }
+
+    setRefreshing(true);
+    setError(null);
+
+    const syncResult = await triggerSyncOnServer(itemIds);
+    if (!syncResult.ok) {
+      setError(syncResult.error ?? "Não foi possível atualizar os dados.");
+      setRefreshing(false);
+      return;
+    }
+
+    await loadAnalytics(months);
+    setRefreshing(false);
+  };
 
   useEffect(() => {
     void loadAnalytics(months);
@@ -226,6 +255,14 @@ export const GastosContent = () => {
         </div>
 
         {isDemo ? <DemoBanner /> : null}
+        {!isDemo && !loading ? (
+          <SyncStatusBar
+            lastSyncedAt={lastSyncedAt}
+            onRefresh={() => void handleRefresh()}
+            refreshing={refreshing}
+            source={dataSource}
+          />
+        ) : null}
         {loading ? <LoadingSpinner label="Calculando gastos do portfólio selecionado…" /> : null}
         {error ? <ErrorMessage message={error} /> : null}
 

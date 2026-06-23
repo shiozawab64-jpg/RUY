@@ -7,6 +7,7 @@ import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import type { PortfolioKind, StoredConnection } from "@/lib/pluggy/types";
 import { HOLDING_SHIOZAWA } from "@/lib/portfolio/types";
 import { addConnection } from "@/lib/session/connections";
+import { registerConnectionOnServer } from "@/lib/session/register-connection";
 
 const PluggyConnect = dynamic(
   () => import("react-pluggy-connect").then((mod) => mod.PluggyConnect),
@@ -67,13 +68,21 @@ export const PluggyConnectButton = ({
 
   const handleSuccess = useCallback(
     (payload: PluggySuccessPayload) => {
-      const connection = addConnection({
+      const connectionPayload = {
         itemId: payload.item.id,
         bankName: payload.item.connector?.name ?? "Banco conectado",
         bankLogoUrl: payload.item.connector?.imageUrl,
         connectedAt: new Date().toISOString(),
         portfolio,
         cnpj: portfolio === "holding" ? HOLDING_SHIOZAWA.cnpj : null,
+      };
+
+      const connection = addConnection(connectionPayload);
+
+      void registerConnectionOnServer(connectionPayload).then((result) => {
+        if (!result.ok) {
+          setError(result.error ?? "Conexão salva localmente, mas o registro no servidor falhou.");
+        }
       });
 
       onConnected(connection);

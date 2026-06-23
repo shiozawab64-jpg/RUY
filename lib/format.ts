@@ -11,6 +11,14 @@ export const formatDate = (isoDate: string): string =>
     year: "numeric",
   }).format(new Date(isoDate));
 
+export const formatDateTime = (isoDate: string): string =>
+  new Intl.DateTimeFormat("pt-BR", {
+    day: "2-digit",
+    month: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(new Date(isoDate));
+
 export const amountClassName = (amount: number): string =>
   amount >= 0 ? "text-positive" : "text-negative";
 

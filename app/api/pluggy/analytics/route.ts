@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { buildSpendingAnalytics } from "@/lib/analytics/spending";
-import { listAccountsForItems, listTransactionsForAccounts } from "@/lib/pluggy/client";
+import { fetchFinancialData } from "@/lib/sync/fetch-data";
 
 const bodySchema = z.object({
   itemIds: z.array(z.string().uuid()),
@@ -17,23 +17,16 @@ export const POST = async (request: Request) => {
         analytics: buildSpendingAnalytics([], body.months),
         accounts: [],
         totalBalance: 0,
+        meta: { source: "live", lastSyncedAt: null },
       });
     }
 
-    const accounts = await listAccountsForItems(body.itemIds);
-    const transactions = await listTransactionsForAccounts(
-      accounts.map((account) => ({
-        id: account.id,
-        bankName: account.bankName,
-        currencyCode: account.currencyCode,
-      })),
-      body.months,
-    );
+    const { accounts, transactions, meta } = await fetchFinancialData(body.itemIds, body.months);
 
     const analytics = buildSpendingAnalytics(transactions, body.months);
     const totalBalance = accounts.reduce((sum, account) => sum + account.balance, 0);
 
-    return NextResponse.json({ analytics, accounts, totalBalance, transactions });
+    return NextResponse.json({ analytics, accounts, totalBalance, transactions, meta });
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json({ error: "Parâmetros de análise inválidos." }, { status: 400 });

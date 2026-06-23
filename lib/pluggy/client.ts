@@ -86,6 +86,12 @@ export const createConnectToken = async (): Promise<string> => {
 export const getItem = async (itemId: string): Promise<PluggyItem> =>
   pluggyFetch<PluggyItem>(`/items/${itemId}`);
 
+export const refreshItem = async (itemId: string): Promise<PluggyItem> =>
+  pluggyFetch<PluggyItem>(`/items/${itemId}`, {
+    method: "PATCH",
+    body: JSON.stringify({}),
+  });
+
 export const deleteItem = async (itemId: string): Promise<void> => {
   await pluggyFetch<void>(`/items/${itemId}`, { method: "DELETE" });
 };
@@ -164,9 +170,7 @@ export const listTransactionsForAccounts = async (
 > => {
   const dateFrom = monthsAgoIso(months);
   const bankByAccountId = new Map(accounts.map((a) => [a.id, a.bankName]));
-  const currencyByAccountId = new Map(
-    accounts.map((a) => [a.id, a.currencyCode ?? "BRL"]),
-  );
+  const currencyByAccountId = new Map(accounts.map((a) => [a.id, a.currencyCode ?? "BRL"]));
   const transactions: Array<{
     id: string;
     accountId: string;

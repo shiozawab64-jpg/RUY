@@ -8,6 +8,7 @@ import { DemoBanner } from "@/components/demo-banner";
 import { InsightsPanel } from "@/components/insights-panel";
 import { CurrencySelector, PortfolioSelector } from "@/components/portfolio-controls";
 import { RuyBrand } from "@/components/ruy-brand";
+import { SyncStatusBar } from "@/components/sync-status-bar";
 import { BankLogo } from "@/components/ui/bank-logo";
 import { ErrorMessage } from "@/components/ui/error-message";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
@@ -26,6 +27,8 @@ import {
 import type { CurrencyFilter, PortfolioFilter } from "@/lib/portfolio/types";
 import { PORTFOLIO_META } from "@/lib/portfolio/types";
 import { getItemIds, readConnections } from "@/lib/session/connections";
+import { triggerSyncOnServer } from "@/lib/session/register-connection";
+import type { FinancialDataSource } from "@/lib/sync/types";
 
 type RawAccount = Omit<DashboardAccount, "portfolio">;
 type RawTransaction = Omit<DashboardTransaction, "portfolio">;
@@ -42,6 +45,9 @@ export const DashboardContent = () => {
   const [insightsLoading, setInsightsLoading] = useState(false);
   const [insightsError, setInsightsError] = useState<string | null>(null);
   const [analysis, setAnalysis] = useState<string | null>(null);
+  const [lastSyncedAt, setLastSyncedAt] = useState<string | null>(null);
+  const [dataSource, setDataSource] = useState<FinancialDataSource | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
 
   const loadDashboard = useCallback(async () => {
     setLoading(true);
@@ -70,6 +76,7 @@ export const DashboardContent = () => {
       const analyticsData = (await analyticsResponse.json()) as {
         accounts?: RawAccount[];
         transactions?: RawTransaction[];
+        meta?: { source?: FinancialDataSource; lastSyncedAt?: string | null };
         error?: string;
       };
 
@@ -81,6 +88,8 @@ export const DashboardContent = () => {
       const accounts = enrichAccounts(analyticsData.accounts ?? [], connections);
       setAllAccounts(accounts);
       setAllTransactions(enrichTransactions(analyticsData.transactions ?? [], accounts));
+      setDataSource(analyticsData.meta?.source ?? null);
+      setLastSyncedAt(analyticsData.meta?.lastSyncedAt ?? null);
     } catch (loadError) {
       setError(
         loadError instanceof Error ? loadError.message : "Não foi possível carregar o painel.",
@@ -89,6 +98,26 @@ export const DashboardContent = () => {
       setLoading(false);
     }
   }, []);
+
+  const handleRefresh = async () => {
+    const itemIds = getItemIds();
+    if (itemIds.length === 0) {
+      return;
+    }
+
+    setRefreshing(true);
+    setError(null);
+
+    const syncResult = await triggerSyncOnServer(itemIds);
+    if (!syncResult.ok) {
+      setError(syncResult.error ?? "Não foi possível atualizar os dados.");
+      setRefreshing(false);
+      return;
+    }
+
+    await loadDashboard();
+    setRefreshing(false);
+  };
 
   useEffect(() => {
     void loadDashboard();
@@ -221,6 +250,14 @@ export const DashboardContent = () => {
         </div>
 
         {isDemo ? <DemoBanner compact /> : null}
+        {!isDemo && !loading ? (
+          <SyncStatusBar
+            lastSyncedAt={lastSyncedAt}
+            onRefresh={() => void handleRefresh()}
+            refreshing={refreshing}
+            source={dataSource}
+          />
+        ) : null}
         {loading ? <LoadingSpinner label="Carregando saldos e transações…" /> : null}
         {error ? <ErrorMessage message={error} /> : null}
 
@@ -277,7 +314,10 @@ export const DashboardContent = () => {
                     Gerenciar conexões →
                   </Link>
                 ) : (
-                  <Link className="text-sm font-semibold text-accent hover:text-ink" href="/connect">
+                  <Link
+                    className="text-sm font-semibold text-accent hover:text-ink"
+                    href="/connect"
+                  >
                     Conectar bancos reais →
                   </Link>
                 )}
