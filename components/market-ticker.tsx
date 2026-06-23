@@ -1,7 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import type { MarketQuote } from "@/lib/market/types";
+
+const REFRESH_MS = 60_000;
 
 const FALLBACK_QUOTES: MarketQuote[] = [
   { id: "ibovespa", label: "Ibovespa", value: 0, changePercent: null, updatedAt: null },
@@ -10,6 +12,10 @@ const FALLBACK_QUOTES: MarketQuote[] = [
 ];
 
 const formatQuoteValue = (quote: MarketQuote): string => {
+  if (quote.value <= 0) {
+    return "—";
+  }
+
   if (quote.id === "ibovespa") {
     return quote.value.toLocaleString("pt-BR", { maximumFractionDigits: 0 });
   }
@@ -29,29 +35,42 @@ const formatChange = (changePercent: number | null): string => {
   return `${sign}${changePercent.toFixed(2)}%`;
 };
 
+type QuoteStatus = "loading" | "ready" | "error";
+
 export const useMarketQuotes = () => {
   const [quotes, setQuotes] = useState<MarketQuote[]>(FALLBACK_QUOTES);
+  const [status, setStatus] = useState<QuoteStatus>("loading");
 
-  useEffect(() => {
-    const loadQuotes = async () => {
-      try {
-        const response = await fetch("/api/market/quotes");
-        const data = (await response.json()) as { quotes?: MarketQuote[] };
+  const loadQuotes = useCallback(async () => {
+    try {
+      const response = await fetch("/api/market/quotes", { cache: "no-store" });
+      const data = (await response.json()) as { quotes?: MarketQuote[]; error?: string };
 
-        if (response.ok && data.quotes?.length) {
-          setQuotes(data.quotes);
-        }
-      } catch {
-        // Keep fallback display on failure
+      if (response.ok && data.quotes?.length) {
+        setQuotes((current) => {
+          const merged = FALLBACK_QUOTES.map((fallback) => {
+            const fresh = data.quotes?.find((quote) => quote.id === fallback.id);
+            return fresh ?? fallback;
+          });
+          return merged;
+        });
+        setStatus("ready");
+        return;
       }
-    };
 
-    void loadQuotes();
-    const intervalId = window.setInterval(loadQuotes, 5 * 60_000);
-    return () => window.clearInterval(intervalId);
+      setStatus((current) => (current === "loading" ? "error" : current));
+    } catch {
+      setStatus((current) => (current === "loading" ? "error" : current));
+    }
   }, []);
 
-  return quotes;
+  useEffect(() => {
+    void loadQuotes();
+    const intervalId = window.setInterval(() => void loadQuotes(), REFRESH_MS);
+    return () => window.clearInterval(intervalId);
+  }, [loadQuotes]);
+
+  return { quotes, status };
 };
 
 type InlineMarketTickerProps = {
@@ -59,32 +78,49 @@ type InlineMarketTickerProps = {
 };
 
 export const InlineMarketTicker = ({ className = "" }: InlineMarketTickerProps) => {
-  const quotes = useMarketQuotes();
+  const { quotes, status } = useMarketQuotes();
+  const isLoading = status === "loading";
+  const hasError = status === "error";
 
   return (
-    <ul className={`flex min-w-0 items-center gap-0 overflow-x-auto whitespace-nowrap ${className}`}>
-      {quotes.map((quote, index) => (
-        <li
-          className={`flex shrink-0 items-center gap-2 px-3 text-[0.6875rem] ${
-            index > 0 ? "border-l border-white/15" : ""
-          }`}
-          key={quote.id}
+    <div className={`flex min-w-0 items-center gap-3 ${className}`}>
+      {isLoading ? (
+        <span className="shrink-0 text-[0.625rem] font-medium uppercase tracking-[0.12em] text-paper/45">
+          Atualizando…
+        </span>
+      ) : null}
+      {hasError ? (
+        <span
+          className="shrink-0 text-[0.625rem] font-medium uppercase tracking-[0.12em] text-amber-200/80"
+          title="Cotações indisponíveis no momento"
         >
-          <span className="font-semibold tracking-wide text-accent">{quote.label}</span>
-          <span className="ruy-numeric text-paper">{formatQuoteValue(quote)}</span>
-          <span
-            className={`ruy-numeric ${
-              quote.changePercent !== null && quote.changePercent > 0
-                ? "text-emerald-300"
-                : quote.changePercent !== null && quote.changePercent < 0
-                  ? "text-red-300"
-                  : "text-paper/60"
-            }`}
+          Offline
+        </span>
+      ) : null}
+      <ul className="flex min-w-0 flex-1 items-stretch gap-0 overflow-x-auto whitespace-nowrap">
+        {quotes.map((quote, index) => (
+          <li
+            className={`flex shrink-0 items-center gap-2.5 px-4 py-1 text-[0.75rem] ${
+              index > 0 ? "border-l border-white/12" : ""
+            } ${isLoading ? "opacity-60" : ""}`}
+            key={quote.id}
           >
-            {formatChange(quote.changePercent)}
-          </span>
-        </li>
-      ))}
-    </ul>
+            <span className="font-semibold tracking-[0.06em] text-accent">{quote.label}</span>
+            <span className="ruy-numeric text-paper">{formatQuoteValue(quote)}</span>
+            <span
+              className={`ruy-numeric text-[0.6875rem] ${
+                quote.changePercent !== null && quote.changePercent > 0
+                  ? "text-emerald-300"
+                  : quote.changePercent !== null && quote.changePercent < 0
+                    ? "text-red-300"
+                    : "text-paper/55"
+              }`}
+            >
+              {formatChange(quote.changePercent)}
+            </span>
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 };

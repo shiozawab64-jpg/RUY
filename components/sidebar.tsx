@@ -14,17 +14,17 @@ export const Sidebar = () => {
 
   return (
     <>
-      <header className="sticky top-0 z-40 border-b-2 border-accent bg-ink text-paper md:hidden">
-        <nav className="flex gap-0 overflow-x-auto px-2">
+      <header className="sticky top-0 z-40 border-b border-ink bg-paper md:hidden">
+        <nav className="flex gap-0 overflow-x-auto px-1">
           {navItems.map((item) => {
             const active = pathname === item.href;
 
             return (
               <Link
-                className={`shrink-0 border-b-2 px-3 py-3 text-xs font-semibold uppercase tracking-[0.08em] transition ${
+                className={`shrink-0 border-b-2 px-4 py-3.5 text-xs font-semibold uppercase tracking-[0.1em] transition ${
                   active
-                    ? "border-accent text-accent"
-                    : "border-transparent text-paper/70 hover:text-paper"
+                    ? "border-accent text-ink"
+                    : "border-transparent text-muted hover:text-ink"
                 }`}
                 href={item.href}
                 key={item.href}
@@ -36,22 +36,24 @@ export const Sidebar = () => {
         </nav>
       </header>
 
-      <aside className="fixed inset-y-0 left-0 z-40 hidden w-64 flex-col border-r border-ink bg-ink text-paper md:flex">
-        <div className="border-b border-white/10 px-5 py-6">
+      <aside className="fixed inset-y-0 left-0 z-40 hidden w-56 flex-col border-r border-rule bg-paper md:flex">
+        <div className="border-b border-rule px-6 py-8">
           <p className="ruy-section-label text-accent">Navegação</p>
-          <p className="mt-1 font-display text-base font-bold tracking-tight">Painel do Ruy</p>
+          <p className="mt-2 font-display text-lg font-bold tracking-tight text-ink">
+            Painel do Ruy
+          </p>
         </div>
 
-        <nav className="flex flex-1 flex-col gap-0 px-0 py-2">
+        <nav className="flex flex-1 flex-col gap-0 px-0 py-3">
           {navItems.map((item) => {
             const active = pathname === item.href;
 
             return (
               <Link
-                className={`border-l-2 px-5 py-3 text-sm font-medium transition ${
+                className={`border-l-2 px-6 py-3.5 text-sm font-medium transition ${
                   active
-                    ? "border-accent bg-white/5 text-accent"
-                    : "border-transparent text-paper/75 hover:border-white/20 hover:bg-white/5 hover:text-paper"
+                    ? "border-accent bg-paper-muted text-ink"
+                    : "border-transparent text-muted hover:border-rule hover:bg-paper-muted hover:text-ink"
                 }`}
                 href={item.href}
                 key={item.href}
@@ -62,11 +64,9 @@ export const Sidebar = () => {
           })}
         </nav>
 
-        <div className="border-t border-white/10 px-6 py-4">
-          <p className="ruy-section-label text-[0.625rem] text-paper/45">
-            Open Finance via Pluggy
-          </p>
-          <p className="mt-1 text-[0.625rem] text-paper/45">Análise com Claude</p>
+        <div className="border-t border-rule px-6 py-5">
+          <p className="ruy-section-label text-[0.625rem]">Open Finance via Pluggy</p>
+          <p className="mt-1.5 text-[0.6875rem] leading-relaxed text-muted">Análise com Claude</p>
         </div>
       </aside>
     </>

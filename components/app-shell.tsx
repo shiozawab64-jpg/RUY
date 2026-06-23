@@ -8,10 +8,12 @@ type AppShellProps = {
 export const AppShell = ({ children }: AppShellProps) => (
   <div className="min-h-svh bg-paper">
     <Sidebar />
-    <div className="flex min-h-svh flex-col md:ml-64">
+    <div className="flex min-h-svh flex-col md:ml-56">
       <JournalMasthead />
       <main className="flex-1 bg-paper">
-        <div className="mx-auto w-full max-w-6xl px-4 py-6 sm:px-8 sm:py-10">{children}</div>
+        <div className="mx-auto w-full max-w-7xl px-[var(--spacing-page-x)] py-8 sm:py-12">
+          {children}
+        </div>
       </main>
     </div>
   </div>

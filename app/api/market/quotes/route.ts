@@ -1,6 +1,7 @@
 import { fetchMarketQuotes } from "@/lib/market/fetch-quotes";
 
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export const GET = async () => {
   try {
@@ -8,7 +9,7 @@ export const GET = async () => {
 
     return Response.json(payload, {
       headers: {
-        "Cache-Control": "no-store",
+        "Cache-Control": "public, s-maxage=30, stale-while-revalidate=60",
       },
     });
   } catch (error) {

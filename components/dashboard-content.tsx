@@ -179,14 +179,14 @@ export const DashboardContent = () => {
 
   return (
     <>
-      <div className="space-y-8">
-        <header className="border-b-2 border-ink pb-6">
+      <div className="ruy-page-stack">
+        <header className="border-b-2 border-ink pb-8">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
               <RuyBrand showTitle={false} size="lg" />
               <div>
                 <p className="ruy-section-label">Olá, Ruy</p>
-                <h2 className="ruy-headline mt-2 text-4xl">Dashboard</h2>
+                <h2 className="ruy-headline mt-2 text-4xl sm:text-5xl">Dashboard</h2>
                 <p className="mt-2 text-sm text-muted">
                   {connectionCount} banco(s) · {filteredAccounts.length} conta(s) ·{" "}
                   {portfolioMeta.label}
@@ -236,14 +236,14 @@ export const DashboardContent = () => {
             ) : null}
 
             {analytics ? (
-              <section className="grid gap-4 sm:grid-cols-3">
-                <article className="ruy-card p-4">
+              <section className="grid gap-5 sm:grid-cols-3">
+                <article className="ruy-card ruy-card-padded">
                   <p className="ruy-section-label">Gastos este mês</p>
                   <p className="ruy-numeric mt-2 text-xl font-medium text-negative">
                     {formatCurrency(analytics.currentMonth.expenses, analyticsCurrency)}
                   </p>
                 </article>
-                <article className="ruy-card p-4">
+                <article className="ruy-card ruy-card-padded">
                   <p className="ruy-section-label">Top categoria</p>
                   <p className="mt-2 font-display text-base font-bold text-ink">
                     {analytics.byCategory[0]?.category ?? "—"}
@@ -254,7 +254,7 @@ export const DashboardContent = () => {
                     </p>
                   ) : null}
                 </article>
-                <article className="ruy-card p-4">
+                <article className="ruy-card ruy-card-padded">
                   <p className="ruy-section-label">vs mês passado</p>
                   <p className="ruy-numeric mt-2 text-xl font-medium text-ink">
                     {analytics.expenseChangePercent === null
@@ -282,9 +282,9 @@ export const DashboardContent = () => {
                   </Link>
                 )}
               </div>
-              <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+              <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
                 {filteredAccounts.map((account) => (
-                  <article className="ruy-card p-4" key={account.id}>
+                  <article className="ruy-card ruy-card-padded" key={account.id}>
                     <div className="flex items-start gap-3">
                       <BankLogo bankName={account.bankName} logoUrl={account.bankLogoUrl} />
                       <div className="min-w-0 flex-1">
