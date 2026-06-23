@@ -9,11 +9,11 @@ export const JournalMasthead = () => (
   <header className="border-b-2 border-ink bg-paper">
     <div className="border-b border-ink bg-ink text-paper">
       <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-4 px-[var(--spacing-page-x)] py-2">
-        <div className="flex min-w-0 flex-1 items-center gap-4">
-          <span className="hidden shrink-0 ruy-section-label text-[0.625rem] text-accent sm:inline">
+        <div className="flex min-w-0 flex-1 items-center gap-3 overflow-hidden sm:gap-4">
+          <span className="hidden shrink-0 ruy-section-label text-[0.625rem] text-accent md:inline">
             Mercados
           </span>
-          <InlineMarketTicker />
+          <InlineMarketTicker className="overflow-hidden" />
         </div>
         <LocalDateTime variant="masthead" />
       </div>

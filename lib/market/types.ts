@@ -1,5 +1,14 @@
+export type MarketQuoteId =
+  | "ibovespa"
+  | "nasdaq"
+  | "sp500"
+  | "dow"
+  | "usdbrl"
+  | "eurbrl"
+  | "btc";
+
 export type MarketQuote = {
-  id: "ibovespa" | "usdbrl" | "eurbrl";
+  id: MarketQuoteId;
   label: string;
   value: number;
   changePercent: number | null;
